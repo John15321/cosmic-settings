@@ -62,7 +62,7 @@ impl VisibleNetworks {
 						set_child: inner_box = Some(&gtk4::Box) {
 							set_orientation: Orientation::Horizontal,
 							set_spacing: 16,
-							append: icon = &Image::from_icon_name(Some("network-wireless-symbolic")) {},
+							append: icon = &Image::from_icon_name("network-wireless-symbolic") {},
 							append: label = &Label::new(Some(&ap.ssid)) {}
 						}
 					},
@@ -247,7 +247,7 @@ impl SettingsGroup for VisibleNetworks {
 						if let Some(ap) = aps.get(device) {
 							eprintln!("configuring {:?}", ap);
 
-							let dialog = gtk4::MessageDialogBuilder::new()
+							let dialog = gtk4::builders::MessageDialogBuilder::new()
 								.buttons(gtk4::ButtonsType::OkCancel)
 								.text(&format!("TODO {}", ap.ssid))
 								.build();
