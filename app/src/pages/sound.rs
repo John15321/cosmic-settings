@@ -1,10 +1,11 @@
 // Copyright 2023 System76 <info@system76.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
-use cosmic::widget::{settings, text};
+use apply::Apply;
+use cosmic::widget::{self, settings, text};
+use cosmic::Element;
 use cosmic_settings_page::{self as page, section, Section};
 use slotmap::SlotMap;
-
 // crate::cache_dynamic_lazy! {
 //     pub static SOUND_ALERTS_VOLUME: String = fl!("sound-alerts", "volume");
 //     pub static SOUND_ALERTS_SOUND: String = fl!("sound-alerts", "sound");
@@ -21,6 +22,11 @@ use slotmap::SlotMap;
 //     pub static SOUND_OUTPUT_CONFIG: String = fl!("sound-output", "config");
 //     pub static SOUND_OUTPUT_BALANCE: String = fl!("sound-output", "balance");
 // }
+
+#[derive(Clone, Debug)]
+pub enum Message {
+    SetVolume(f64),
+}
 
 #[derive(Default)]
 pub struct Page;
@@ -100,12 +106,29 @@ fn output() -> Section<crate::pages::Message> {
             fl!("sound-output", "config"),
             fl!("sound-output", "balance"),
         ])
-        .view::<Page>(|_binder, _page, section| {
+        .view::<Page>(|binder, _page, section| {
+            let input = binder.page::<Page>().expect("input page not found");
+
             settings::view_section(&section.title)
-                .add(settings::item(&section.descriptions[0], text("TODO")))
+                .add(
+                    settings::item::builder(&section.descriptions[0]).control(widget::slider(
+                        0.0..=100.0,
+                        // (input
+                        //     .input_touchpad
+                        //     .scroll_config
+                        //     .as_ref()
+                        //     .and_then(|x| x.scroll_factor)
+                        //     .unwrap_or(1.)
+                        //     .log(2.)
+                        //     * 10.0)
+                            50.0,
+                        |value| Message::SetVolume(value),
+                    )),
+                )
                 .add(settings::item(&section.descriptions[1], text("TODO")))
                 .add(settings::item(&section.descriptions[2], text("TODO")))
                 .add(settings::item(&section.descriptions[3], text("TODO")))
-                .into()
+                .apply(Element::from)
+                .map(crate::pages::Message::Sound)
         })
 }

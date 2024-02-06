@@ -294,6 +294,10 @@ impl cosmic::Application for SettingsApp {
                     }
                 }
 
+                crate::pages::Message::Sound(message) => {
+                    println!("sound not supported yet");
+                }
+
                 crate::pages::Message::External { .. } => {
                     todo!("external plugins not supported yet");
                 }
